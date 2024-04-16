@@ -1,0 +1,12 @@
+function xdot = dynamics_nbody(~, x, const)
+%DYNAMICS_NBODY Summary of this function goes here
+%   Detailed explanation goes here
+
+n = length(x)/6; %number of bodies
+
+r1 = x0(1)
+
+
+
+end
+
