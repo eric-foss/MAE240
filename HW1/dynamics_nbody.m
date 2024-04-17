@@ -2,16 +2,19 @@ function xdot = dynamics_nbody(~, x, const)
 %DYNAMICS_NBODY Summary of this function goes here
 %   Detailed explanation goes here
 
-n = length(x)/6; %number of bodies
-
-xdot = zeros(length(x), 1);
+n = length(x)/6 - 1; %number of bodies
 
 r = zeros(3, n); %
 a = zeros(3, n);
 
+R = zeros(3, 1);
+A = zeros(3, 1);
+
 for i = 1:n
     r(:, i) = x(3*i-2:3*i);
 end
+
+R = x(length(x)/2 - 2:length(x)/2);
 
 for i = 1:n
     for j = 1:n
@@ -23,6 +26,11 @@ for i = 1:n
     end
 end
 
+for i = 1:n
+    rjN1 = R - r(:, i);
+    A = A - const.G*const.m_all(i)*rjN1/norm(rjN1)^3;
+end
 
+acc = [reshape(a, 1, 3*n)'; A];
 
-xdot = [x(length(x)/2 + 1:end); reshape(a, 1, 3*n)'];
+xdot = [x(length(x)/2 + 1:end); acc];
