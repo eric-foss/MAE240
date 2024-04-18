@@ -1,14 +1,10 @@
 function xdot = dynamics_nbody(~, x, const)
-%DYNAMICS_NBODY Summary of this function goes here
-%   Detailed explanation goes here
+%DYNAMICS_NBODY
 
 n = length(x)/6 - 1; %number of bodies
 
 r = zeros(3, n); %
 a = zeros(3, n);
-
-R = zeros(3, 1);
-A = zeros(3, 1);
 
 for i = 1:n
     r(:, i) = x(3*i-2:3*i);
@@ -25,6 +21,8 @@ for i = 1:n
         a(:, i) = a(:, i) - const.G*const.m_all(j)*(rji)/norm(rji)^3;
     end
 end
+
+A = zeros(3, 1);
 
 for i = 1:n
     rjN1 = R - r(:, i);
