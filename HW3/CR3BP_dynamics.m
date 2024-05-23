@@ -7,7 +7,7 @@ y = X(2);
 z = X(3);
 xp = X(4);
 yp = X(5);
-zp = X(6);
+
 
 xdot = zeros(6, 1);
 
