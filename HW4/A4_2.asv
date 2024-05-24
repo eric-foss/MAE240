@@ -73,11 +73,10 @@ ylabel('Normalized Jacobi'); xlabel('Non-dimensional Time');
 
 figure(3); hold all;
 
-plot3(x1(:, 1), x1(:, 2), x1(:, 3));
-plot3(x2(:, 1), x2(:, 2), x2(:, 3));
-plot3(x3(:, 1), x3(:, 2), x3(:, 3));
-plot3(x4(:, 1), x4(:, 2), x4(:, 3));
+plot3(x1(:,1), x1(:,2));
+plot3(x2(:,1), x2(:,2), x2(:, 3));
+plot3(x3(:,1), x3(:,2), x3(:, 3));
+plot3(x4(:,1), x4(:,2), x4(:, 3));
 title('Manifold Directions');
 legend('Positive Stable', 'Negative Stable', 'Positive Unstable', 'Negative Unstable');
-xlabel('Non-dimensional X'); ylabel('Non-dimensional Y'); zlabel('Non-dimensional Z');
 
