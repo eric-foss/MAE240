@@ -72,8 +72,9 @@ function [X_LO, Phi_LO] = LyapunovOrbit(L, const)
 % Figure 3: a plot of the normalized (J/J0) Jacobi constant vs time
 % (non-dimensional)
 
-% Figure 4: a plot of the stable manifold trajectories with the Lyapunov
+% Figure 4: a plot of the stable and unstable manifold trajectories with the Lyapunov
 % orbit and primaries
+
 
 
 
@@ -278,9 +279,6 @@ plot(t_LO, J_LO./J_LO(1), 'LineWidth', 2), grid, xlabel('tN'), ...
 % Determine the correct increment size for manifolds
 inc = floor(size(X_LO, 1)/const.nm);
 
-% Define figure
-manifoldFig = figure(4);
-hold on
 
 % Define the Monodromy matrix
 Phi_T = reshape(X_LO(end, 5:20), 4, 4);
@@ -312,6 +310,7 @@ stable_vec = eig_vec(:, stable_ind)/norm(eig_vec(:, stable_ind));
 unstable_vec = eig_vec(:, unstable_ind)/norm(eig_vec(:, unstable_ind));
 
 % Determine manifold trajectory for each iteration
+check = 0;
 for s = -1:2:1
     for i = 1:const.nm
         
@@ -333,12 +332,36 @@ for s = -1:2:1
         % Integrate to determine manifold trajectories
         [~, X_stable] = ode45(@(t, X) PCR3BP_dyn(t, X, const, eqns), tspan_stable, X0_stable, const.optionsODE);
         [~, X_unstable] = ode45(@(t, X) PCR3BP_dyn(t, X, const, eqns), tspan_unstable, X0_unstable, const.optionsODE);
-    
-        % Plot the manifold trajectory
-        plot(X_stable(:, 1), X_stable(:, 2), 'b', X_unstable(:, 1), X_unstable(:, 2), 'r')
         
+        % Plot the stable and unstable manifold trajectories
+        figure(4); hold on
+        plot(X_stable(:, 1), X_stable(:, 2), 'b', X_unstable(:, 1), X_unstable(:, 2), 'r')
+
+        if s == -1
+            for j = 1:400
+                
+                dist = sqrt((X_unstable(j, 1) - (1 - const.mu))^2 + (X_unstable(j, 2))^2);
+                
+                if dist <= (const.Rsecondary+600)/const.R
+                    figure(6); hold on
+                    plot(X_unstable(1:400, 1), X_unstable(1:400, 2), 'r');
+                    check = 1;
+                    break;
+                end
+
+            end
+
+            figure(5); hold on
+            plot(X_unstable(1:400, 1), X_unstable(1:400, 2), 'r');
+
+        end
+
     end
 end
+
+
+% Figure 4
+figure(4); hold on
 
 % Plot Saturn and Titan
 viscircles([-const.mu 0], const.Rprimary/const.R, 'Color', '[0.8500 0.3250 0.0980]');
@@ -350,6 +373,45 @@ plot(X_LO(:, 1), X_LO(:, 2), 'k', 'LineWidth', 2), grid on, xlabel('X/R'), ylabe
 
 legend({'Stable', 'Unstable'})
 hold off
+axis equal
+
+
+% Figure 5
+figure(5); hold on
+
+% Plot Saturn and Titan
+viscircles([-const.mu 0], const.Rprimary/const.R, 'Color', '[0.8500 0.3250 0.0980]');
+viscircles([(1 - const.mu) 0], const.Rsecondary/const.R, 'Color', '[0.6350 0.0780 0.1840]');
+
+% Replot the Lyapunov orbit
+plot(X_LO(:, 1), X_LO(:, 2), 'k', 'LineWidth', 2), grid on, xlabel('X/R'), ylabel('Y/R'), ...
+    title('Quick Descent Unstable Manifolds')
+
+hold off
+xlim([0.98 1.06]);
+ylim([-0.03 0.03]);
+daspect([1 1 1]);
+
+% Figure 6
+figure(6); hold on
+
+% Plot Saturn and Titan
+viscircles([-const.mu 0], const.Rprimary/const.R, 'Color', '[0.8500 0.3250 0.0980]');
+viscircles([(1 - const.mu) 0], const.Rsecondary/const.R, 'Color', '[0.6350 0.0780 0.1840]');
+
+% Replot the Lyapunov orbit
+plot(X_LO(:, 1), X_LO(:, 2), 'k', 'LineWidth', 2), grid on, xlabel('X/R'), ylabel('Y/R'), ...
+    title('Quick Descent Unstable Manifolds')
+
+hold off
+xlim([0.98 1.06]);
+ylim([-0.03 0.03]);
+daspect([1 1 1]);
+
+if check == 0
+    disp('No Quick Descent Unstable Manifolds Exist For this Orbit. Consider a farther displacement');
+end
+
 
 % Reshape state vector for output
 Phi_LO = zeros(4, 4, length(t_LO));
