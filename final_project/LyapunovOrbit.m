@@ -9,7 +9,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [X_LO, Phi_LO] = LyapunovOrbit(L, const)
+function [X_LO, Phi_LO, X_LP, J] = LyapunovOrbit(L, const)
 %-------------------------------------------------------------------------%
 %                          Function Description                           %
 %-------------------------------------------------------------------------%
@@ -166,7 +166,7 @@ end
 % Detemine the x location of the defined lagrange point
 xL = (1 - const.mu) + gamma;
 XL = [xL; 0; 0; 0];
-
+X_LP = XL;
 
 
 %-------------------------------------------------------------------------%
@@ -221,7 +221,8 @@ tspan_guess = 0:0.01:const.LOperiod;
 figure(1)
 plot(X_guess(:, 1), X_guess(:, 2), 'k', X_guess(1, 1), X_guess(1, 2),'rv', xL, 0, 'b*',... 
     'MarkerSize', 10, 'LineWidth', 2), grid, xlabel('X/R'), ylabel('Y/R'), ...
-    title('Pre-correction Trajectory')
+    %title('Pre-correction Trajectory')
+    legend('Pre-Corrected Trajectory', 'Initial Guess State', 'Lagrange Point');
 
 
 
@@ -257,19 +258,21 @@ end
 J_LO = 1/2.*dot(v_LO, v_LO, 2) - 1/2.*(x_LO.^2 + y_LO.^2) - ...
     (1 - const.mu)./sqrt((x_LO + const.mu).^2 + y_LO.^2) - ...
     const.mu./sqrt((x_LO - 1 + const.mu).^2 + y_LO.^2);
+J = J_LO(1);
 
 % Plot the Lyapunov Orbit
 figure(2)
 plot(x_LO, y_LO, 'k', x_LO(1), y_LO(1),'rv', xL, 0, 'b*',... 
     'MarkerSize', 10, 'LineWidth', 2), grid, xlabel('X/R'), ylabel('Y/R'), ...
-    legend({['T =', num2str(T), '; J =', num2str(J_LO(1))], '', L}), ...
-    title(['Post-correction Trajectory (Lyapunov Orbit about ', L, ')'])
+    legend({['T =', num2str(T), '; J =', num2str(J_LO(1))], 'Corrected State', 'Lagrange Point'}), ...
+    %title(['Post-correction Trajectory (Lyapunov Orbit about ', L, ')'])
 
 % Plot the Jacobi constant normalized about initial value
 figure(3)
-plot(t_LO, J_LO./J_LO(1), 'LineWidth', 2), grid, xlabel('tN'), ...
-    ylabel('J/J_0'), title('Non-dimensional Jacobi Constant (Normalized)')
-
+plot(t_LO, J_LO./J_LO(1), 'LineWidth', 2), grid, xlabel('Non-dimensional Time'), ...
+    ylabel('Normalized Non-dimensional Jacobi Integral')
+    %title('Non-dimensional Jacobi Constant (Normalized)')
+    
 
 
 %-------------------------------------------------------------------------%
@@ -368,8 +371,8 @@ viscircles([-const.mu 0], const.Rprimary/const.R, 'Color', '[0.8500 0.3250 0.098
 viscircles([(1 - const.mu) 0], const.Rsecondary/const.R, 'Color', '[0.6350 0.0780 0.1840]');
 
 % Replot the Lyapunov orbit
-plot(X_LO(:, 1), X_LO(:, 2), 'k', 'LineWidth', 2), grid on, xlabel('X/R'), ylabel('Y/R'), ...
-    title('Stable and Unstable Manifold Trajectories')
+plot(X_LO(:, 1), X_LO(:, 2), 'k', 'LineWidth', 2), grid on, xlabel('X/R'), ylabel('Y/R')
+%title('Stable and Unstable Manifold Trajectories')
 
 legend({'Stable', 'Unstable'})
 hold off
@@ -384,8 +387,8 @@ viscircles([-const.mu 0], const.Rprimary/const.R, 'Color', '[0.8500 0.3250 0.098
 viscircles([(1 - const.mu) 0], const.Rsecondary/const.R, 'Color', '[0.6350 0.0780 0.1840]');
 
 % Replot the Lyapunov orbit
-plot(X_LO(:, 1), X_LO(:, 2), 'k', 'LineWidth', 2), grid on, xlabel('X/R'), ylabel('Y/R'), ...
-    title('Quick Descent Unstable Manifolds')
+plot(X_LO(:, 1), X_LO(:, 2), 'k', 'LineWidth', 2), grid on, xlabel('X/R'), ylabel('Y/R')
+%title('Quick Descent Unstable Manifolds')
 
 hold off
 xlim([0.98 1.06]);
@@ -400,8 +403,8 @@ viscircles([-const.mu 0], const.Rprimary/const.R, 'Color', '[0.8500 0.3250 0.098
 viscircles([(1 - const.mu) 0], const.Rsecondary/const.R, 'Color', '[0.6350 0.0780 0.1840]');
 
 % Replot the Lyapunov orbit
-plot(X_LO(:, 1), X_LO(:, 2), 'k', 'LineWidth', 2), grid on, xlabel('X/R'), ylabel('Y/R'), ...
-    title('Quick Descent Unstable Manifolds')
+plot(X_LO(:, 1), X_LO(:, 2), 'k', 'LineWidth', 2), grid on, xlabel('X/R'), ylabel('Y/R')
+%title('Quick Descent Unstable Manifolds')
 
 hold off
 xlim([0.98 1.06]);
